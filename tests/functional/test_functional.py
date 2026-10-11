@@ -641,6 +641,18 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("assert.py", expect)
 
+        # A single pattern given as a string is one glob, not a list of
+        # characters to match one by one.
+        test._config = {"skips": "*assert.py"}
+        self.check_example("assert.py", expect)
+
+        test._config = {"skips": "tests/**.py"}
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+        }
+        self.check_example("assert.py", expect)
+
         test._config = {}
         expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 0},

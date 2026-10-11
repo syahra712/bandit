@@ -68,7 +68,13 @@ def gen_config(name):
 @test.test_id("B101")
 @test.checks("Assert")
 def assert_used(context, config):
-    for skip in config.get("skips", []):
+    skips = config.get("skips", [])
+    if isinstance(skips, str):
+        # a lone pattern, e.g. ``skips = "tests/*.py"`` in pyproject.toml;
+        # iterating it would match every file as soon as it contains a "*"
+        skips = [skips]
+
+    for skip in skips:
         if fnmatch.fnmatch(context.filename, skip):
             return None
 
